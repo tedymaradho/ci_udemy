@@ -56,4 +56,21 @@ class Products extends BaseController
 
         echo json_encode($output);
     }
+
+    public function findByBarcode()
+    {
+        $barcode = $this->request->getPost('barcode');
+        $res = $this->productModel->searchBarcode($barcode);
+
+        $data = array();
+        if ($res) {
+            $data = [
+                'product_id' => $res['product_id'],
+                'product_name' => $res['product_name'],
+                'price' => $res['price']
+            ];
+        }
+
+        echo json_encode($data);
+    }
 }

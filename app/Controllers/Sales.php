@@ -23,4 +23,25 @@ class Sales extends BaseController
 
         return view('pages/sales/index', $data);
     }
+
+    public function addCart()
+    {
+        $cart = \Config\Services::cart();
+        $cart->insert(
+            array(
+                'id' => $this->request->getVar('product_id'),
+                'qty' => 1,
+                'price' => $this->request->getVar('price'),
+                'name' => $this->request->getVar('product_name'),
+                'options' => array('Size' => 'L', 'Color' => 'Red')
+            )
+        );
+
+    }
+
+    public function viewCart()
+    {
+        $cart = \Config\Services::cart();
+        $data = $cart->contents();
+    }
 }

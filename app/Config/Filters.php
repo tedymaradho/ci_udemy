@@ -2,6 +2,8 @@
 
 namespace Config;
 
+use App\Filters\AdminFilter;
+use App\Filters\CashierFilter;
 use CodeIgniter\Config\BaseConfig;
 use CodeIgniter\Filters\CSRF;
 use CodeIgniter\Filters\DebugToolbar;
@@ -16,11 +18,13 @@ class Filters extends BaseConfig
      * make reading things nicer and simpler.
      */
     public array $aliases = [
-        'csrf'          => CSRF::class,
-        'toolbar'       => DebugToolbar::class,
-        'honeypot'      => Honeypot::class,
-        'invalidchars'  => InvalidChars::class,
+        'csrf' => CSRF::class,
+        'toolbar' => DebugToolbar::class,
+        'honeypot' => Honeypot::class,
+        'invalidchars' => InvalidChars::class,
         'secureheaders' => SecureHeaders::class,
+        'adminfilter' => AdminFilter::class,
+        'cashierfilter' => CashierFilter::class,
     ];
 
     /**
@@ -29,12 +33,43 @@ class Filters extends BaseConfig
      */
     public array $globals = [
         'before' => [
-            // 'honeypot',
-            // 'csrf',
-            // 'invalidchars',
+            'adminfilter' => [
+                'except' => [
+                    'Home',
+                    'Home/*',
+                    '/',
+                ]
+            ],
+            'cashierfilter' => [
+                'except' => [
+                    'Home',
+                    'Home/*',
+                    '/',
+                ]
+            ]
         ],
         'after' => [
             'toolbar',
+            'adminfilter' => [
+                'except' => [
+                    'home',
+                    'home/*',
+                    '/products',
+                    '/products/*',
+                    'Sales',
+                    'Sales/*',
+                    '/',
+                ]
+            ],
+            'cashierfilter' => [
+                'except' => [
+                    'home',
+                    'home/*',
+                    'Sales',
+                    'Sales/*',
+                    '/',
+                ]
+            ]
             // 'honeypot',
             // 'secureheaders',
         ],

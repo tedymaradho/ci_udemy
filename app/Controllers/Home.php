@@ -52,14 +52,18 @@ class Home extends BaseController
                 session()->set('email', $cek_login['email']);
                 session()->set('name', $cek_login['name']);
                 session()->set('authority', $cek_login['authority']);
-                return redirect()->to(base_url('products'));
+                echo 'success';
             } else {
-                session()->setFlashdata('errors', 'Wrong email or password');
-                return redirect()->to(base_url('home'));
+                echo 'Wrong email or password';
             }
         } else {
-            session()->setFlashdata('errors', \Config\Services::validation()->getErrors());
-            return redirect()->to(base_url('home'));
+            echo 'error';
         }
+    }
+
+    public function cekLogout()
+    {
+        session()->destroy();
+        echo 'success';
     }
 }

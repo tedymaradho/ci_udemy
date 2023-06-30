@@ -41,10 +41,17 @@ scratch. This page gets rid of all links and provides the needed markup only.
                 </button>
 
                 <!-- Right navbar links -->
-                <ul class="order-1 order-md-3 navbar-nav navbar-no-expand ml-auto">
+                <!-- <ul class="order-1 order-md-3 navbar-nav navbar-no-expand ml-auto">
                     <li class="nav-item">
                         <a class="nav-link" data-widget="control-sidebar" data-slide="true" href="#" role="button">
                             <i class="fas fa-th-large"></i>
+                        </a>
+                    </li>
+                </ul> -->
+                <ul class="order-1 order-md-3 navbar-nav navbar-no-expand ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" data-widget="fullscreen" href="#" role="button">
+                            <i class="fas fa-expand-arrows-alt"></i>
                         </a>
                     </li>
                 </ul>
@@ -66,21 +73,22 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                         <div class="col-3">
                                             <label for="no_faktur" class="col-form-label">No Faktur</label>
                                             <input type="text" class="form-control" name="no_faktur" id="no_faktur"
-                                                value="<?= $no_faktur ?>">
+                                                value="<?= $no_faktur ?>" readonly>
                                         </div>
                                         <div class="col-3">
                                             <label for="tanggal" class="col-form-label">Tanggal</label>
                                             <input type="text" class="form-control" name="tanggal" id="tanggal"
-                                                value="<?= date('d/m/Y') ?>">
+                                                value="<?= date('d/m/Y') ?>" readonly>
                                         </div>
                                         <div class="col-3">
                                             <label for="jam" class="col-form-label">Jam</label>
                                             <input type="text" class="form-control" name="jam" id="jam"
-                                                value="<?= date('H:i:s') ?>">
+                                                value="<?= date('H:i:s') ?>" readonly>
                                         </div>
                                         <div class="col-3">
                                             <label for="kasir" class="col-form-label">Kasir</label>
-                                            <input type="text" class="form-control" name="kasir" id="kasir">
+                                            <input type="text" class="form-control" name="kasir" id="kasir"
+                                                value="<?= session()->get('name') ?>" readonly>
                                         </div>
                                     </div>
                                 </div>
@@ -106,7 +114,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                     <div class="row">
                                         <div class="col-sm-2 input-group">
                                             <input type="text" class="form-control" placeholder="Barcode/Kode Barang"
-                                                name="barcode">
+                                                id="barcode" autocomplete="off" autofocus>
                                             <div class="input-group-append">
                                                 <button class="input-group-text btn btn-secondary">
                                                     <i class="fas fa-search"></i>
@@ -118,21 +126,23 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                         </div>
                                         <div class="col-sm-3">
                                             <input type="text" class="form-control" placeholder="Nama Product"
-                                                name="nama_product">
+                                                id="product_name" readonly>
                                         </div>
                                         <div class="col-sm-1">
-                                            <input type="text" class="form-control" placeholder="Kategori"
-                                                name="kategori">
+                                            <input type="text" class="form-control" placeholder="Kategori" id="kategori"
+                                                readonly>
                                         </div>
                                         <div class="col-sm-1">
-                                            <input type="text" class="form-control" placeholder="Satuan" name="satuan">
+                                            <input type="text" class="form-control" placeholder="Satuan" id="satuan"
+                                                readonly>
                                         </div>
                                         <div class="col-sm-1">
-                                            <input type="text" class="form-control" placeholder="Harga" name="harga">
+                                            <input type="text" class="form-control" placeholder="Harga" id="price"
+                                                readonly>
                                         </div>
                                         <div class="col-sm-1">
                                             <input type="number" min="1" value="1" class="form-control"
-                                                placeholder="Qty" name="qty">
+                                                placeholder="Qty" name="qty" id="qty" autocomplete="off">
                                         </div>
                                         <div class="col-sm-3">
                                             <button class="btn btn-primary">
@@ -223,6 +233,85 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <script src="<?= base_url('adminlte') ?>/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
     <!-- AdminLTE App -->
     <script src="<?= base_url('adminlte') ?>/dist/js/adminlte.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        function clearInput() {
+            $('#barcode').val('');
+            $('#product_name').val('');
+            $('#price').val('');
+            $('#qty').val('1');
+        }
+
+        $('#qty').keyup(function (e) {
+            if (e.which == 13) {
+                if ($('#product_name').val() != "") {
+                    $.ajax({
+                        url: "<?= site_url('sales/addCart') ?>",
+                        type: 'get',
+                        data: {
+                            product_id: $('#product_id').val(),
+                            product_name: $('#product_name').val(),
+                            price: $('#price').val(),
+                        },
+                        success: function () {
+                            clearInput();
+                        },
+                        error: function (xhr, thrownError) {
+                            alert(xhr.status + "\n" + xhr.responseText + "\n" + thrownError);
+                        }
+                    });
+                }
+            }
+        })
+
+        // barcode
+        $('#barcode').keyup(function (e) {
+            if (e.which == 13) {
+                if ($('#barcode').val() == "") {
+                    Swal.fire({
+                        icon: 'error',
+                        position: 'top-start',
+                        title: 'Barcode belum diisi',
+                        text: 'Silahkan diisi terlebih dahulu',
+                        timer: 2500
+                    })
+                } else {
+                    $.ajax({
+                        url: "<?= site_url('products/findByBarcode') ?>",
+                        method: 'post',
+                        data: {
+                            barcode: $('#barcode').val(),
+                        },
+                        dataType: 'json',
+                        success: function (data) {
+                            if (data['product_name']) {
+                                $('#qty').focus();
+
+                                $('#product_name').val(data['product_name']);
+
+                                $('#price').val(new Intl.NumberFormat().format(data['price']));
+
+                            } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Tidak ada',
+                                    text: 'Barcode tidak terdaftar',
+                                    timer: 2000
+                                })
+                            }
+                        },
+                        error: function (xhr, thrownError) {
+                            alert(xhr.status + "\n" + xhr.responseText + "\n" + thrownError);
+                        }
+                    })
+                }
+            }
+        })
+        // end barcode
+
+    </script>
 </body>
 
 </html>

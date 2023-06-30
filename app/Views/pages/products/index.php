@@ -56,8 +56,17 @@
                 },
             ],
             order: [
-                [1, 'asc']
+                [1, 'desc']
             ]
+        });
+
+        $('#logout').on('click', function () {
+            $.ajax({
+                url: "<?= site_url('home/cekLogout') ?>",
+                success: function (res) {
+                    window.location.href = "<?= site_url() ?>";
+                }
+            })
         });
     });
 </script>

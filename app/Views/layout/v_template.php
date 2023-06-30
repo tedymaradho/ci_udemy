@@ -47,8 +47,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" data-widget="control-sidebar" data-slide="true" href="#" role="button">
-                        <i class="fas fa-th-large"></i>
+                    <a class="nav-link" id="logout" href="#">
+                        Log Out
                     </a>
                 </li>
             </ul>
@@ -73,7 +73,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
                             alt="User Image">
                     </div>
                     <div class="info">
-                        <a href="#" class="d-block">Alexander Pierce</a>
+                        <a href="#" class="d-block">
+                            <?= session()->get('email') ? session()->get('email') : '' ?>
+                        </a>
                     </div>
                 </div>
 
@@ -93,7 +95,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="<?= base_url('sales') ?>" class="nav-link <?= $path == 'sales' ? 'active' : '' ?>">
+                            <a href="<?= base_url('sales') ?>" target="_blank"
+                                class="nav-link <?= $path == 'sales' ? 'active' : '' ?>">
                                 <i class="nav-icon fas fa-th"></i>
                                 <p>
                                     Sales

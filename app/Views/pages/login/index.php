@@ -15,6 +15,12 @@
     <link rel="stylesheet" href="<?= base_url('adminlte') ?>/plugins/icheck-bootstrap/icheck-bootstrap.min.css">
     <!-- Theme style -->
     <link rel="stylesheet" href="<?= base_url('adminlte') ?>/dist/css/adminlte.min.css">
+
+    <style>
+        .hidden {
+            display: none;
+        }
+    </style>
 </head>
 
 <body class="hold-transition login-page">
@@ -27,22 +33,13 @@
             <div class="card-body login-card-body">
                 <p class="login-box-msg">Sign in to start your session</p>
 
-                <button type="button" class="btn btn-warning toastsDefaultWarning">
-                    Launch Warning Toast
-                </button>
+                <div class="text-red my-2 hidden" id="warning">
 
-                <?php if (session()->getFlashdata('errors')) { ?>
-                    <div class="alert alert-warning">
-                        <?= session()->getFlashdata('errors') ?>
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                <?php } ?>
+                </div>
 
                 <form action="<?= base_url() ?>home/cekLogin" method="post">
                     <div class="input-group mb-3">
-                        <input type="email" class="form-control" placeholder="Email" name="email">
+                        <input type="email" class="form-control" placeholder="Email" id="email">
                         <div class="input-group-append">
                             <div class="input-group-text">
                                 <span class="fas fa-envelope"></span>
@@ -50,7 +47,7 @@
                         </div>
                     </div>
                     <div class="input-group mb-3">
-                        <input type="password" class="form-control" placeholder="Password" name="password">
+                        <input type="password" class="form-control" placeholder="Password" id="password">
                         <div class="input-group-append">
                             <div class="input-group-text">
                                 <span class="fas fa-lock"></span>
@@ -68,7 +65,7 @@
                         </div>
                         <!-- /.col -->
                         <div class="col-4">
-                            <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+                            <button type="submit" class="btn btn-primary btn-block" id="sign_in">Sign In</button>
                         </div>
                         <!-- /.col -->
                     </div>
@@ -95,14 +92,28 @@
     <script src="<?= base_url('adminlte') ?>/dist/js/adminlte.min.js"></script>
 
     <script>
-        $('.toastsDefaultWarning').click(function () {
-            $(document).Toasts('create', {
-                class: 'bg-warning',
-                title: 'Toast Title',
-                subtitle: 'Subtitle',
-                body: 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr.'
+        $('#sign_in').on('click', function (e) {
+            e.preventDefault();
+            $.ajax({
+                url: "<?= site_url('home/cekLogin') ?>",
+                method: 'post',
+                data: {
+                    email: $('#email').val(),
+                    password: $('#password').val(),
+                },
+                success: function (res) {
+                    if (res == 'success') {
+                        window.location.href = "<?= site_url('products') ?>";
+                    } else {
+                        $('#warning').removeClass('hidden');
+                        $('#warning').text('wrong email or password');
+                    }
+                },
+                error: function (xhr, thrownError) {
+                    alert(xhr.status + "\n" + xhr.responseText + "\n" + thrownError);
+                },
             })
-        });
+        })
     </script>
 </body>
 
