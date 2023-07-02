@@ -7,6 +7,7 @@ use CodeIgniter\Model;
 class SaleModel extends Model
 {
     protected $table = 'tb_sale';
+    protected $protectFields = false;
 
     public function getFaktur()
     {
@@ -21,7 +22,7 @@ class SaleModel extends Model
             $kd = "0001";
         }
 
-        $no_faktur = date("Ymd") . $kd;
+        $no_faktur = "T" . date("ymd") . $kd;
 
         return $no_faktur;
     }

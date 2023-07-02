@@ -22,27 +22,29 @@ class Products extends BaseController
 
     public function getDataTables()
     {
-        $length = $this->request->getGet('length');
-        $start = $this->request->getGet('start');
-        $keyword = $this->request->getGet('search')['value'];
-        $order = $this->request->getGet('order')['0']['column'];
-        $dir = $this->request->getGet('order')['0']['dir'];
+        $length = $this->request->getVar('length');
+        $start = $this->request->getVar('start');
+        $keyword = $this->request->getVar('search')['value'];
+        $order = $this->request->getVar('order')['0']['column'];
+        $dir = $this->request->getVar('order')['0']['dir'];
 
         if ($keyword) {
             $data = $this->productModel->orLike('product_id', $keyword)
-                ->orLike('product_name', $keyword)->limit($length, $start)->orderBy($order, $dir)->find();
+                ->orLike('product_name', $keyword)->orderBy($order, $dir)->findAll($length, $start);
         } else {
-            $data = $this->productModel->limit($length, $start)->orderBy($order, $dir)->find();
+            $data = $this->productModel->orderBy($order, $dir)->findAll($length, $start);
         }
 
-        $res = array();
+        $res = [];
         $no = $start + 1;
+
         foreach ($data as $d) {
-            $arr['no'] = $no;
-            $arr['product_id'] = $d['product_id'];
-            $arr['product_name'] = $d['product_name'];
-            $arr['price'] = $d['price'];
-            $arr['options'] = "<a href='#' class='btn-warning btn-sm'>Ubah</a>&nbsp; <a href='#' class='btn-danger btn-sm'>Hapus</a>";
+            $arr = [];
+            $arr[] = $no;
+            $arr[] = $d['product_id'];
+            $arr[] = $d['product_name'];
+            $arr[] = $d['price'];
+            $arr[] = "<a href='#' class='btn-warning btn-sm'>Ubah</a>&nbsp; <a href='#' class='btn-danger btn-sm'>Hapus</a>";
             $res[] = $arr;
             $no++;
         }

@@ -39,14 +39,7 @@
         $('#product_table').DataTable({
             processing: true,
             serverSide: true,
-            ajax: 'products/getDataTables',
-            columns: [
-                { data: 'no' },
-                { data: 'product_id' },
-                { data: 'product_name' },
-                { data: 'price' },
-                { data: 'options' },
-            ],
+            ajax: "<?= site_url('products/getDataTables') ?>",
             columnDefs: [
                 {
                     orderable: false, targets: 0
